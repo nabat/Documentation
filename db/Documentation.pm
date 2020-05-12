@@ -57,9 +57,10 @@ sub list{
   my $PAGE_ROWS = ($attr->{PAGE_ROWS}) ? $attr->{PAGE_ROWS} : 25;
 
   my $WHERE = $self->search_former( $attr, [
-    [ 'ID', 'INT', 'd.uid', 1 ],
-    [ 'WIKI', 'STR', 'd.wiki',  1],
+    [ 'ID',         'INT', 'd.uid',        1 ],
+    [ 'WIKI',       'STR', 'd.wiki',       1 ],
     [ 'CONFLUENCE', 'STR', 'd.confluence', 1 ],
+    [ 'VERIF',      'INT', 'd.verif',      1 ]
   ],
     {
       WHERE => 1
@@ -161,5 +162,25 @@ sub change{
   });
 }
 
+#**********************************************************
+=head2 change($attr)
+
+  Arguments:
+
+
+  Returns:
+
+=cut
+#**********************************************************
+sub success_admin_link {
+  my $self = shift;
+  my ($attr) = @_;
+
+  return $self->changes( {
+    CHANGE_PARAM => 'ID',
+    TABLE        => 'documentation',
+    DATA         => $attr
+  });
+}
 
 1;

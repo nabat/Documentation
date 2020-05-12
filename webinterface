@@ -1,7 +1,6 @@
-#!/usr/bin/perl
-=head1 NAME
+=head1 Documentation
 
- Abills doc
+ Abills Documentation
 
 =cut
 
@@ -25,10 +24,12 @@ my $Doc = Documentation->new($db, $admin, \%conf);
 #**********************************************************
 sub doc_list {
 
-  if ($FORM{add_form}) {
-    $html->tpl_show(_include('documentation_add', 'Documentation'), {
-      SUBMIT => $html->form_input('add', $lang{ADD}, { TYPE => 'submit' }),
-      TITLE  => $lang{ADD}
+  my $index = get_function_index('doc_list');
+
+  if ($FORM{success}) {
+    $Doc->success_admin_link({
+      ID    => $FORM{success},
+      VERIF => 1
     });
   }
 
@@ -80,29 +81,52 @@ sub doc_list {
     }
   }
 
-  result_former({
-    INPUT_DATA      => $Doc,
-    FUNCTION        => 'list',
-    BASE_FIELDS     => 0,
-    DEFAULT_FIELDS  => 'WIKI,CONFLUENCE',
-    FUNCTION_FIELDS => 'del, change',
-    EXT_TITLES      => {
-      'WIKI'       => 'WIKI',
-      'CONFLUENCE' => 'CONFLUENCE',
-    },
-    TABLE           => {
-      width   => '100%',
-      caption => "Doc",
-      qs      => $pages_qs,
-      ID      => 'Doc_list',
-      MENU    => "Add url:index=" . $index . '&add_form=1:add'
-    },
-    MAKE_ROWS       => 1,
-    SEARCH_FORMER   => 1,
-    MODULE          => 'Documentation',
-    TOTAL           => 1
-  });
+  if ($FORM{add_form} || $FORM{ex_param}) {
+    $html->tpl_show(_include('documentation_add', 'Documentation'), {
+      WIKI   => $FORM{ex_param} || '',
+      SUBMIT => $html->form_input('add', $lang{ADD}, { TYPE => 'submit' }),
+      TITLE  => $lang{ADD}
+    });
+  }
+  else 
+  {
+    my $doc_list = $Doc->list({ 
+      COLS_NAME  => 1,
+      WIKI       => '_SHOW',
+      VERIF      => '_SHOW',
+      CONFLUENCE => '_SHOW',
+    });
 
+    my $table = $html->table(
+      {
+        width      => '100',
+        caption    => "Doc",
+        title      => [ 'WIKI', 'CONFLUENCE' ],
+        MENU       => "Add url:index=" . $index . '&add_form=1:add'
+      }
+    );
+
+    foreach my $doc_element (@$doc_list) {
+      $table->addrow(
+        $doc_element->{wiki},
+        $doc_element->{confluence},
+        ($doc_element->{verif}) != 1 ? $html->button('',
+            'index=' . $index . "&success=$doc_element->{id}", { class => 'fa fa-check' }) : ''
+      );
+    }
+
+    print $table->show();
+
+    $table = $html->table(
+      {
+        width      => '100',
+        rows       => [ [ $lang{TOTAL}, $html->b($Doc->{TOTAL}) ] ]
+      }
+    );
+
+    print $table->show();
+  }
+  
   return 1;
 }
 
