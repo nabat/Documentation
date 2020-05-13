@@ -24,6 +24,15 @@ my $Doc = Documentation->new($db, $admin, \%conf);
 #**********************************************************
 sub doc_list {
 
+  my $index = get_function_index('doc_list');
+
+  if ($FORM{success}) {
+    $Doc->success_admin_link({
+      ID    => $FORM{success},
+      VERIF => 1
+    });
+  }
+
   if ($FORM{add}) {
     $Doc->add({
       WIKI       => $FORM{WIKI},
@@ -84,7 +93,8 @@ sub doc_list {
     my $doc_list = $Doc->list({ 
       COLS_NAME  => 1,
       WIKI       => '_SHOW',
-      CONFLUENCE => '_SHOW'
+      VERIF      => '_SHOW',
+      CONFLUENCE => '_SHOW',
     });
 
     my $table = $html->table(
@@ -99,7 +109,9 @@ sub doc_list {
     foreach my $doc_element (@$doc_list) {
       $table->addrow(
         $doc_element->{wiki},
-        $doc_element->{confluence}
+        $doc_element->{confluence},
+        ($doc_element->{verif}) != 1 ? $html->button('',
+            'index=' . $index . "&success=$doc_element->{id}", { class => 'fa fa-check' }) : ''
       );
     }
 

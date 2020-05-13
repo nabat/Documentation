@@ -66,6 +66,7 @@ if ($FORM{url}) {
   my $url = $Doc->list({
     WIKI       => $FORM{url},
     CONFLUENCE => '_SHOW',
+    VERIF      => 1,
     COLS_NAME  => 1
   });
 
