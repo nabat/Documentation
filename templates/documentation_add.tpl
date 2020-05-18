@@ -1,5 +1,7 @@
 <form action='$SELF_URL' METHOD='post' name='FORM_DOC' ID='FORM_DOC' class='form-horizontal' role='form'>
   <input type=hidden name='index' value='$index'>
+  <input type=hidden name='param' value='$FORM{chg}'>
+
   <fieldset>
     <div class='box box-theme box-form'>
       <div class='box-header with-border'><h4 class='box-title'>%TITLE%</h4></div>

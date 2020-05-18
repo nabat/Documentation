@@ -46,21 +46,24 @@ sub doc_list {
     }
   }
 
-  if ($FORM{del}) {
+  if ($FORM{del} && $FORM{COMMENTS}) {
     $Doc->del($FORM{del});
-    if (!$Doc->{errno}) {
+
+    if (!_error_show($Doc)) {
       $html->message('info', $lang{SUCCESS});
     }
     else {
       $html->message('err', $lang{ERROR}, $Doc->{errno} . " : " . $Doc->{errstr});
     }
   }
-  if ($FORM{chg}) {
+
+  if ($FORM{chg} || $FORM{param}) {
     if ($FORM{change}) {
       $Doc->change({
-        ID         => $FORM{chg},
+        ID         => $FORM{param},
         WIKI       => $FORM{WIKI},
         CONFLUENCE => $FORM{CONFLUENCE}
+
       });
       if (!$Doc->{errno}) {
         $html->message('info', $lang{SUCCESS});
@@ -77,15 +80,17 @@ sub doc_list {
         SUBMIT     => $html->form_input('change', $lang{CHANGE}, { TYPE => 'submit' }),
         TITLE      => $lang{CHANGE},
         ID         => $html->form_input('chg', $FORM{chg}, { TYPE => 'hidden' }),
+        param      => $FORM{chg},
       });
     }
   }
 
   if ($FORM{add_form} || $FORM{ex_param}) {
+    my $doc = $Doc->info($FORM{chg}) if ($FORM{chg});
     $html->tpl_show(_include('documentation_add', 'Documentation'), {
       WIKI   => $FORM{ex_param} || '',
       SUBMIT => $html->form_input('add', $lang{ADD}, { TYPE => 'submit' }),
-      TITLE  => $lang{ADD}
+      TITLE  => $lang{ADD},
     });
   }
   else 
@@ -111,7 +116,11 @@ sub doc_list {
         $doc_element->{wiki},
         $doc_element->{confluence},
         ($doc_element->{verif}) != 1 ? $html->button('',
-            'index=' . $index . "&success=$doc_element->{id}", { class => 'fa fa-check' }) : ''
+            'index=' . $index . "&success=$doc_element->{id}", { class => 'fa fa-check' }) : '',
+        $html->button('',
+            'index=' . $index . "&chg=$doc_element->{id}", { class => 'change' }),
+        $html->button('',
+            'index=' . $index . "&del=$doc_element->{id}", { class => 'del', MESSAGE => "$lang{DEL}" })
       );
     }
 
