@@ -114,7 +114,7 @@ sub info {
 
 =cut
 #**********************************************************
-sub add{
+sub add {
   my $self = shift;
   my ($attr) = @_;
 
@@ -133,7 +133,7 @@ sub add{
 
 =cut
 #**********************************************************
-sub del{
+sub del {
   my $self = shift;
   my ($id) = @_;
 
@@ -151,7 +151,7 @@ sub del{
 
 =cut
 #**********************************************************
-sub change{
+sub change {
   my $self = shift;
   my ($attr) = @_;
 
