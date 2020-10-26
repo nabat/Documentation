@@ -146,7 +146,6 @@ if ($FORM{url}) {
   }
   else {
     $html->redirect($url);
-    return 1;
   }
 }
 
