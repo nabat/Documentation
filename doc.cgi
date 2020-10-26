@@ -142,11 +142,12 @@ if ($FORM{url}) {
 
   if (!$url) {
     my $no_url = "https://support.abills.net.ua/doc.cgi";
-    $html->redirect($no_url . '?add_form=1&ex_param=' . $FORM{url});
+    $html->redirect($no_url . '?add_form=1&ex_param=' . $FORM{url}) if ($FORM{url});
   }
   else {
     $html->redirect($url);
   }
+  
 }
 
 1;
